@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How It Works — VentiCool</title>
+  <style>
+    /* ============ CORE VARIABLES ============ */
+    :root {
+      --bg-dark: #0a1628;
+      --card-bg: rgba(14, 30, 56, 0.4);
+      --pure-white: #ffffff;
+      --text-muted: #94a3b8;
+      
+      /* Cool Conclave Palette */
+      --teal-dark: #0f2847;
+      --teal: #0ea5c0;
+      --teal-light: #3dd8f0;
+      --accent-green: #25b481;
+      --accent-lime: #87d68d;
+      
+      --glass-border: rgba(14, 165, 192, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--pure-white);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ============ BACKGROUND EFFECTS ============ */
+    .bg-canvas {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0; overflow: hidden; pointer-events: none;
+    }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(100px);
+      opacity: 0.4; mix-blend-mode: screen;
+    }
+    .orb-1 { width: 50vw; height: 50vw; background: var(--teal-dark); top: -20%; left: -10%; }
+    .orb-2 { width: 40vw; height: 40vw; background: rgba(37,180,129,0.2); bottom: -10%; right: -10%; }
+    
+    /* ============ NAVBAR ============ */
+    .navbar {
+      position: fixed; top: 0; left: 0; width: 100%;
+      padding: 20px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 100;
+      transition: background 0.4s ease;
+      background: rgba(10, 22, 40, 0.8);
+      backdrop-filter: blur(10px);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: var(--pure-white);
+    }
+    .nav-brand-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--teal), var(--accent-green));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.2rem;
+    }
+    .nav-brand-text {
+      font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+    .nav-brand-text span { color: var(--teal-light); }
+    .nav-back {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
+      transition: color 0.3s;
+    }
+    .nav-back svg {
+      width: 16px; height: 16px; stroke: currentColor;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none;
+    }
+    .nav-back:hover { color: var(--teal-light); }
+
+    /* ============ MAIN LAYOUT ============ */
+    .split-layout {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      min-height: 100vh;
+    }
+
+    /* ============ LEFT HALF: THE FAN ============ */
+    .fan-wrapper {
+      position: fixed;
+      top: 50%;
+      left: -25vw;
+      width: 80vw;
+      height: 80vw;
+      max-width: 1000px;
+      max-height: 1000px;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .fan-hub {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    
+    /* Fan Blades */
+    .blade {
+      position: absolute;
+      top: calc(50% - 60px);
+      left: 50%;
+      width: 48%;
+      height: 120px;
+      transform-origin: left center;
+      
+      background: linear-gradient(90deg, rgba(15,40,71,0.9), rgba(14,165,192,0.8));
+      border: 1px solid rgba(61,216,240,0.3);
+      border-radius: 10px 80px 80px 10px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 15px 35px rgba(0,0,0,0.4);
+      cursor: pointer;
+      pointer-events: auto;
+      
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 40px;
+      transition: background 0.4s ease, border-color 0.4s ease, filter 0.4s;
+    }
+    .blade:hover {
+      background: linear-gradient(90deg, rgba(14,165,192,0.9), rgba(37,180,129,0.8));
+      border-color: rgba(37,180,129,0.5);
+    }
+    .blade.active {
+      background: linear-gradient(90deg, rgba(37,180,129,0.95), rgba(135,214,141,0.9));
+      border-color: var(--accent-lime);
+      box-shadow: 0 0 40px rgba(37,180,129,0.4), inset 0 0 10px rgba(255,255,255,0.2);
+    }
+
+    .blade-number {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.5);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      transition: color 0.4s;
+    }
+    .blade.active .blade-number {
+      color: var(--pure-white);
+    }
+    
+    /* Center Cap */
+    .center-cap {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 160px; height: 160px;
+      transform: translate(-50%, -50%);
+      background: var(--bg-dark);
+      border: 8px solid var(--teal-dark);
+      border-radius: 50%;
+      box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8);
+      z-index: 5;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .center-cap::after {
+      content: '';
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--accent-green));
+      box-shadow: 0 0 20px rgba(37,180,129,0.4);
+      animation: pulse 3s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      100% { transform: scale(1.1); opacity: 1; }
+    }
+
+    /* ============ RIGHT HALF: CONTENT ============ */
+    .content-wrapper {
+      margin-left: 48vw; 
+      width: 48vw;
+      padding: 40px 60px 100px 0;
+      max-width: 800px;
+    }
+
+    .step-content {
+      display: none;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .step-content.active {
+      display: block;
+      animation: fadeUpIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes fadeUpIn {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(37,180,129,0.15);
+      border: 1px solid rgba(37,180,129,0.3);
+      border-radius: 20px;
+      color: var(--accent-lime);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      background: linear-gradient(to right, var(--pure-white), var(--teal-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .step-description {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .step-description p {
+      margin-bottom: 16px;
+    }
+
+    .flow-box {
+      background: rgba(14,165,192,0.08);
+      border-left: 3px solid var(--teal);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 30px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      color: var(--teal-light);
+      line-height: 1.6;
+    }
+
+    .flow-box strong {
+      color: var(--accent-lime);
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .btn-next {
+      background: linear-gradient(135deg, var(--teal), var(--accent-green));
+      color: var(--pure-white);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 30px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(37,180,129,0.3);
+    }
+    .btn-next svg {
+      width: 20px; height: 20px;
+      stroke: currentColor; stroke-width: 2; fill: none;
+    }
+    .btn-next.finish {
+      background: rgba(255,255,255,0.1);
+      box-shadow: none;
+    }
+
+    /* ============ FLOW SECTION ============ */
+    .flow-section {
+      position: relative;
+      z-index: 20;
+      background: var(--bg-dark);
+      padding: 80px 24px 120px;
+      border-top: 1px solid var(--glass-border);
+      text-align: center;
+    }
+    .flow-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--pure-white);
+      margin-bottom: 60px;
+    }
+    .flow-diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .flow-step {
+      background: linear-gradient(135deg, rgba(14,165,192,0.1), rgba(15,40,71,0.5));
+      border: 1px solid var(--glass-border);
+      padding: 24px 30px;
+      border-radius: 12px;
+      width: 100%;
+      text-align: center;
+    }
+    .flow-step h4 {
+      color: var(--accent-lime);
+      font-size: 1.25rem;
+      font-family: 'Outfit', sans-serif;
+      margin-bottom: 8px;
+    }
+    .flow-step p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    .flow-arrow {
+      color: var(--teal);
+      margin: 8px 0;
+    }
+    .flow-arrow svg {
+      width: 24px; height: 24px;
+      stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round;
+      animation: bounceDown 2s infinite;
+    }
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1024px) {
+      .fan-wrapper { left: -35vw; }
+      .content-wrapper { margin-left: 35vw; width: 60vw; }
+      .step-title { font-size: 2.2rem; }
+    }
+    @media (max-width: 768px) {
+      .split-layout { flex-direction: column; justify-content: flex-start; padding-top: 80px; }
+      
+      .fan-wrapper {
+        position: relative;
+        top: 0; left: 50%;
+        transform: translate(-50%, 0);
+        width: 120vw; height: 120vw;
+        margin-bottom: -60vw; 
+      }
+      
+      .content-wrapper {
+        margin-left: 0;
+        width: 100%;
+        padding: 40px 24px;
+        z-index: 20;
+        text-align: left;
+      }
+      .controls { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="bg-canvas">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <a href="/" class="nav-brand">
+      <div class="nav-brand-icon">V</div>
+      <div class="nav-brand-text">Venti<span>Cool</span></div>
+    </a>
+    <a href="/" class="nav-back">
+      <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <span>Back to Home</span>
+    </a>
+  </nav>
+
+  <!-- Main Layout -->
+  <div class="split-layout">
+    
+    <!-- Left Fan Visual -->
+    <div class="fan-wrapper">
+      <div class="fan-hub" id="fan-hub">
+        <!-- Blades injected by JS -->
+        <div class="center-cap"></div>
+      </div>
+    </div>
+
+    <!-- Right Content -->
+    <div class="content-wrapper">
+      <div id="content-container">
+        <!-- Step content injected by JS -->
+      </div>
+      
+      <div class="controls">
+        <button class="btn-next" id="btn-next">
+          Next Step
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete Flow Section -->
+  <section class="flow-section">
+    <h2 class="flow-section-title">Complete Working Flow</h2>
+    <div class="flow-diagram">
+      
+      <div class="flow-step">
+        <h4>Fresh Outdoor Air</h4>
+        <p>Intake into the system</p>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg></div>
+      
+      <div class="flow-step">
+        <h4>Wet Cooling Pad</h4>
+        <p>Water supplied by 12V pump. Evaporative cooling absorbs heat.</p>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg></div>
+      
+      <div class="flow-step">
+        <h4>Cool & Humid Air</h4>
+        <p>Air enters the main chamber</p>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg></div>
+      
+      <div class="flow-step">
+        <h4>Tower Fan</h4>
+        <p>Pushes air toward the Venturi section</p>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg></div>
+      
+      <div class="flow-step">
+        <h4>Venturi Section</h4>
+        <p>Cross-sectional area decreases, accelerating the air</p>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg></div>
+      
+      <div class="flow-step">
+        <h4>Silica-Gel Plates</h4>
+        <p>Solid-desiccant adsorbs excess moisture</p>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg></div>
+      
+      <div class="flow-step">
+        <h4>Cool & Drier Air</h4>
+        <p>The treated, conditioned air</p>
+      </div>
+      <div class="flow-arrow"><svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg></div>
+      
+      <div class="flow-step">
+        <h4>170 mm Exhaust Fan</h4>
+        <p>Pulls and delivers the cool, drier air into the room</p>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    // Data for the 7 steps
+    const stepsData = [
+      {
+        title: "Fresh Air Intake",
+        desc: "<p>The working process begins with the intake of fresh outdoor air into the VentiCool system. The fresh air enters through the inlet and is directed toward the wet cooling pad.</p><p>The airflow through the system is maintained by the combination of the tower fan and exhaust fan, ensuring that the air continuously moves through each stage of the cooling and dehumidification process.</p>",
+        flow: "Fresh outdoor air → Cooling pad"
+      },
+      {
+        title: "Evaporative Cooling",
+        desc: "<p>A 0.5 L water reservoir stores the water required. A 12V DC water pump draws water and supplies it to the top of the cooling pad. The water spreads across the pad, keeping its surface wet.</p><p>When fresh air passes through, a portion of the water evaporates. During evaporation, heat is absorbed from the air, causing its temperature to decrease.</p>",
+        flow: "<strong>Limitation:</strong> The evaporated water becomes vapour, making the air <em>Cool + Humid</em>. VentiCool is designed to address this."
+      },
+      {
+        title: "Air Movement",
+        desc: "<p>The cool and humid air leaving the cooling pad enters the main chamber. A tower fan, driven by a 12V DC motor, pushes the cooled air forward toward the Venturi section. At the outlet, a 170 mm exhaust fan assists in drawing the air through the unit.</p>",
+        flow: "<strong>Tower fan:</strong> Pushes air forward.<br><strong>Exhaust fan:</strong> Pulls air through."
+      },
+      {
+        title: "Venturi Acceleration",
+        desc: "<p>The air then enters the Venturi section, which gradually decreases in cross-sectional area (converging at 26°) to a throat width of ~130 mm.</p><p>According to the continuity equation (A₁V₁ = A₂V₂), the reduced area causes the air velocity to increase.</p><p>This increased velocity creates a focused airflow, improving the interaction between the air and the desiccant plates.</p>",
+        flow: "Reduced area → Increased air velocity"
+      },
+      {
+        title: "Dehumidification",
+        desc: "<p>The next stage is solid-desiccant dehumidification. Two removable silica-gel plates (90×90×20 mm) are positioned inside the Venturi throat. Constructed with an open-cell acrylic grid, they allow high-velocity air to pass through.</p><p>The silica gel adsorbs excess moisture from the air, reducing its humidity. This is the key feature that differentiates VentiCool from conventional coolers.</p>",
+        flow: "Cool + Humid air → Moisture adsorption → <strong>Cooler + Drier air</strong>"
+      },
+      {
+        title: "Final Air Delivery",
+        desc: "<p>After passing through the silica-gel section, the treated air reaches the outlet.</p><p>The 170 mm high-static-pressure exhaust fan draws the air through the complete unit and delivers it into the room. The design aims to provide cooler, drier, and higher-velocity air compared with a conventional evaporative cooler.</p>",
+        flow: "Cooling pad (Removes heat) → Venturi (Increases velocity) → Silica gel (Removes moisture)"
+      },
+      {
+        title: "Silica-Gel Regeneration",
+        desc: "<p>The silica-gel cassettes are removable and reusable. During operation, they continuously adsorb moisture. Once saturated, the silica gel changes colour from blue to pink.</p><p>The cassette is then removed and placed under direct sunlight. Solar heat drives the absorbed moisture out, restoring its capacity without any additional electrical energy.</p>",
+        flow: "A second cassette can be kept as a backup to allow continuous operation."
+      }
+    ];
+
+    const TOTAL_STEPS = stepsData.length;
+    const fanHub = document.getElementById('fan-hub');
+    const contentContainer = document.getElementById('content-container');
+    const btnNext = document.getElementById('btn-next');
+    
+    let currentStep = 0;
+    const ANGLE_PER_BLADE = 360 / TOTAL_STEPS; // approx 51.42 degrees
+
+    // 1. Initialize DOM
+    function init() {
+      stepsData.forEach((step, index) => {
+        // Create Blade
+        const blade = document.createElement('div');
+        blade.className = 'blade';
+        blade.id = `blade-${index}`;
+        blade.style.transform = `rotate(${index * ANGLE_PER_BLADE}deg)`;
+        blade.innerHTML = `<span class="blade-number" id="num-${index}">0${index + 1}</span>`;
+        blade.addEventListener('click', () => goToStep(index));
+        fanHub.appendChild(blade);
+        
+        // Create Content
+        const content = document.createElement('div');
+        content.className = `step-content`;
+        content.id = `content-${index}`;
+        content.innerHTML = `
+          <div class="step-badge">Phase 0${index + 1}</div>
+          <h2 class="step-title">${step.title}</h2>
+          <div class="step-description">${step.desc}</div>
+          ${step.flow ? `<div class="flow-box">${step.flow}</div>` : ''}
+        `;
+        contentContainer.appendChild(content);
+      });
+      
+      goToStep(0);
+    }
+
+    // 2. Go to specific step
+    function goToStep(index) {
+      if (index >= TOTAL_STEPS) index = 0;
+
+      // Update active classes on blades
+      document.querySelectorAll('.blade').forEach((b, i) => {
+        b.classList.toggle('active', i === index);
+      });
+
+      const targetRotation = -(index * ANGLE_PER_BLADE);
+      fanHub.style.transform = `rotate(${targetRotation}deg)`;
+
+      // Fix number orientations inside the blades
+      document.querySelectorAll('.blade-number').forEach((num, i) => {
+        const bladeLocalAngle = i * ANGLE_PER_BLADE;
+        const globalAngle = bladeLocalAngle + targetRotation;
+        num.style.transform = `rotate(${-globalAngle}deg)`;
+        num.style.transition = 'transform 1s cubic-bezier(0.22, 1, 0.36, 1)';
+      });
+
+      // Update content visibility
+      document.querySelectorAll('.step-content').forEach((content, i) => {
+        content.classList.remove('active');
+        if (i === index) {
+          setTimeout(() => content.classList.add('active'), 50);
+        }
+      });
+
+      // Update button text
+      if (index === TOTAL_STEPS - 1) {
+        btnNext.innerHTML = 'Restart Cycle <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>';
+        btnNext.classList.add('finish');
+      } else {
+        btnNext.innerHTML = 'Next Phase <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+        btnNext.classList.remove('finish');
+      }
+
+      currentStep = index;
+    }
+
+    btnNext.addEventListener('click', () => {
+      goToStep(currentStep + 1);
+    });
+
+    init();
+  </script>
+</body>
+</html>

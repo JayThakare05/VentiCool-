@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Components — VentiCool Cooling System</title>
+  <meta name="description" content="Explore the 10 key components of the VentiCool Venturi-Driven Evaporative Cooling System including fiber body, silica gel, cooling pad, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============ RESET & BASE ============ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --deep-blue: #0a1628;
+      --navy: #0f2847;
+      --teal-dark: #0c6e7a;
+      --teal: #0ea5c0;
+      --teal-light: #3dd8f0;
+      --cyan: #67e8f9;
+      --ice-blue: #b8f0fc;
+      --white-blue: #e8f9fd;
+      --pure-white: #ffffff;
+      --accent-green: #10b981;
+      --accent-lime: #4ade80;
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-bg-hover: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-border-hover: rgba(14, 165, 192, 0.35);
+      --card-bg: rgba(15, 40, 71, 0.5);
+      --card-bg-hover: rgba(15, 50, 85, 0.7);
+      --text-muted: rgba(184, 240, 252, 0.6);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', 'Inter', sans-serif;
+      background: var(--deep-blue);
+      color: var(--pure-white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ============ ANIMATED BACKGROUND ============ */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-canvas::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(14,165,192,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(16,185,129,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(15,40,71,0.6) 0%, transparent 70%);
+      animation: bgShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      0%   { transform: translate(0,0) scale(1); }
+      50%  { transform: translate(-3%,2%) scale(1.05); }
+      100% { transform: translate(2%,-3%) scale(1); }
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.3;
+      animation: float 12s ease-in-out infinite;
+    }
+    .orb-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(14,165,192,0.3), transparent);
+      top: 5%; left: 10%;
+      animation-duration: 16s;
+    }
+    .orb-2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(16,185,129,0.2), transparent);
+      bottom: 10%; right: 5%;
+      animation-delay: -5s; animation-duration: 20s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      25%  { transform: translate(30px,-40px) scale(1.05); }
+      50%  { transform: translate(-20px,20px) scale(0.95); }
+      75%  { transform: translate(40px,30px) scale(1.02); }
+    }
+
+    .grid-overlay {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(14,165,192,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14,165,192,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    }
+
+    /* ============ NAVBAR ============ */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      background: rgba(10,22,40,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      transition: all 0.3s ease;
+    }
+    .navbar.scrolled {
+      padding: 12px 40px;
+      background: rgba(10,22,40,0.95);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--pure-white);
+    }
+    .nav-brand-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--teal), var(--accent-green));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.9rem; color: var(--pure-white);
+    }
+    .nav-brand-text {
+      font-size: 1.15rem; font-weight: 700; letter-spacing: -0.3px;
+    }
+    .nav-brand-text span { color: var(--teal-light); }
+
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--cyan);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .nav-back:hover {
+      background: var(--glass-bg-hover);
+      border-color: var(--teal);
+      color: var(--pure-white);
+      transform: translateX(-3px);
+    }
+    .nav-back svg {
+      width: 16px; height: 16px;
+      stroke: currentColor; stroke-width: 2; fill: none;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* ============ PAGE HEADER ============ */
+    .page-header {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 140px 24px 60px;
+    }
+    .page-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 18px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 50px;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--teal-light);
+      margin-bottom: 24px;
+      animation: fadeSlideDown 0.7s ease-out;
+    }
+    .page-badge-dot {
+      width: 6px; height: 6px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+    .page-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800; letter-spacing: -1px; line-height: 1.1;
+      margin-bottom: 16px;
+      animation: fadeSlideDown 0.8s ease-out 0.1s both;
+    }
+    .page-title .highlight {
+      background: linear-gradient(135deg, var(--cyan), var(--teal-light), var(--accent-green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-subtitle {
+      font-size: 1.1rem; font-weight: 400;
+      color: var(--text-muted);
+      max-width: 600px; margin: 0 auto; line-height: 1.6;
+      animation: fadeSlideDown 0.8s ease-out 0.2s both;
+    }
+    .header-divider {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--accent-green));
+      border-radius: 2px;
+      margin: 32px auto 0;
+      animation: fadeSlideDown 0.8s ease-out 0.3s both;
+    }
+
+    /* ============ COUNT STRIP ============ */
+    .count-strip {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center; gap: 40px;
+      padding: 0 24px 48px;
+      animation: fadeSlideUp 0.8s ease-out 0.4s both;
+    }
+    .count-item { text-align: center; }
+    .count-number {
+      font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--teal-light), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .count-label {
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--text-muted); margin-top: 2px;
+    }
+    .count-divider {
+      width: 1px; height: 40px;
+      background: var(--glass-border);
+    }
+
+    /* ============ COMPONENTS GRID ============ */
+    .components-section {
+      position: relative; z-index: 1;
+      max-width: 1100px; /* Slightly narrower for 2-column layout */
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .components-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* 2 components in a row */
+      gap: 32px;
+    }
+
+    /* ============ COMPONENT CARD — RECTANGULAR ============ */
+    .component-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px; /* Rectangular boxes */
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .component-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .component-card:hover {
+      border-color: var(--glass-border-hover);
+      box-shadow: 0 12px 40px rgba(14,165,192,0.12),
+                  0 0 0 1px rgba(14,165,192,0.08);
+    }
+
+    /* Number badge */
+    .card-number {
+      position: absolute; top: 12px; left: 12px; z-index: 5;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+      border-radius: 4px;
+      font-size: 0.8rem; font-weight: 700; color: var(--pure-white);
+      box-shadow: 0 4px 12px rgba(14,165,192,0.3);
+    }
+
+    /* Card image — always visible */
+    .card-image-wrapper {
+      width: 100%; height: 260px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(15,40,71,0.8), rgba(10,22,40,0.9));
+    }
+    .card-image {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      padding: 24px;
+      transition: transform 0.5s ease;
+      filter: brightness(1.05);
+    }
+    .component-card:hover .card-image {
+      transform: scale(1.06);
+    }
+
+    /* Card name — always visible */
+    .card-name {
+      padding: 16px 20px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--pure-white);
+      display: flex; align-items: center; gap: 10px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .card-name-dot {
+      width: 8px; height: 8px;
+      background: var(--teal-light);
+      border-radius: 2px;
+      flex-shrink: 0;
+      transition: background 0.3s ease;
+    }
+    .component-card:hover .card-name-dot {
+      background: var(--accent-green);
+    }
+
+    /* ============ SLIDE-OVER DETAIL PANEL ============ */
+    .card-detail {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 22, 40, 0.95); /* Dark solid background for overlay */
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 10;
+      overflow-y: auto;
+      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card-detail-inner {
+      padding: 24px;
+    }
+
+    /* Left side card slides from left to right over the image */
+    .component-card.slide-from-left .card-detail {
+      transform: translateX(-100%);
+    }
+
+    /* Right side card slides from right to left over the image */
+    .component-card.slide-from-right .card-detail {
+      transform: translateX(100%);
+    }
+
+    .component-card:hover .card-detail,
+    .component-card.expanded .card-detail {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .detail-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, var(--teal), transparent);
+      margin-bottom: 20px;
+      opacity: 0.4;
+    }
+    
+    /* Structured data typography */
+    .card-attributes {
+      margin-bottom: 16px;
+      padding: 12px;
+      background: rgba(14,165,192,0.05);
+      border-left: 3px solid var(--teal);
+      border-radius: 0 4px 4px 0;
+    }
+    
+    .card-attr {
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .card-attr:last-child { margin-bottom: 0; }
+    .attr-label { color: var(--teal-light); font-weight: 600; }
+    .attr-value { color: var(--pure-white); }
+    
+    .card-section { margin-bottom: 14px; }
+    .card-section:last-child { margin-bottom: 0; }
+    
+    .section-title {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent-lime);
+      margin-bottom: 4px;
+    }
+
+    .card-description {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem; font-weight: 400;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    /* Expand hint icon */
+    .card-expand-hint {
+      position: absolute; top: 12px; right: 12px; z-index: 5;
+      width: 32px; height: 32px;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .card-expand-hint svg {
+      width: 16px; height: 16px;
+      stroke: var(--teal-light); stroke-width: 2; fill: none;
+      stroke-linecap: round; stroke-linejoin: round;
+      transition: transform 0.4s ease;
+    }
+    .component-card.expanded .card-expand-hint svg {
+      transform: rotate(180deg);
+    }
+    .component-card:hover .card-expand-hint {
+      background: rgba(14,165,192,0.15);
+      border-color: rgba(14,165,192,0.3);
+    }
+
+    /* ============ FOOTER ============ */
+    .page-footer {
+      position: relative; z-index: 1;
+      text-align: center; padding: 40px 24px;
+      border-top: 1px solid var(--glass-border);
+    }
+    .footer-text {
+      font-size: 0.75rem; font-weight: 400;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(14,165,192,0.3);
+    }
+
+    /* ============ LOADING SKELETON ============ */
+    .skeleton-card {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .skeleton-img {
+      width: 100%; height: 260px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .skeleton-text {
+      margin: 20px;
+      height: 24px; width: 70%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 900px) {
+      .components-grid {
+        grid-template-columns: 1fr; /* Switch to 1 column on smaller screens */
+      }
+      .component-card.slide-from-left .card-detail-inner,
+      .component-card.slide-from-right .card-detail-inner {
+        transform: translateY(-20px); /* Just slide down on mobile */
+      }
+      .component-card.expanded .card-detail-inner {
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 14px 20px; }
+      .nav-brand-text { font-size: 1rem; }
+      .count-strip { gap: 24px; }
+      .count-number { font-size: 1.6rem; }
+      .page-header { padding: 120px 20px 40px; }
+      .card-image-wrapper { height: 200px; }
+    }
+
+    @media (max-width: 480px) {
+      .navbar { padding: 12px 16px; }
+      .nav-back span { display: none; }
+      .card-name { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <a href="/" class="nav-brand">
+      <div class="nav-brand-icon">V</div>
+      <div class="nav-brand-text">Venti<span>Cool</span></div>
+    </a>
+    <a href="/" class="nav-back">
+      <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      <span>Back to Home</span>
+    </a>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="page-badge">
+      <span class="page-badge-dot"></span>
+      System Components
+    </div>
+    <h1 class="page-title">Key <span class="highlight">Components</span></h1>
+    <p class="page-subtitle">
+      Explore every component that powers the VentiCool system — hover on any card to reveal full details.
+    </p>
+    <div class="header-divider"></div>
+  </header>
+
+  <!-- Count Strip -->
+  <div class="count-strip">
+    <div class="count-item">
+      <div class="count-number">11</div>
+      <div class="count-label">Components</div>
+    </div>
+    <div class="count-divider"></div>
+    <div class="count-item">
+      <div class="count-number">12V</div>
+      <div class="count-label">DC Powered</div>
+    </div>
+    <div class="count-divider"></div>
+    <div class="count-item">
+      <div class="count-number">0.5L</div>
+      <div class="count-label">Reservoir</div>
+    </div>
+  </div>
+
+  <!-- Components Grid — filled by JS -->
+  <section class="components-section">
+    <div class="components-grid" id="components-grid">
+      <!-- Loading skeletons shown before data loads -->
+      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div></div>
+      <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <p class="footer-text">VentiCool — Sustainable Cooling Innovation</p>
+  </footer>
+
+  <script>
+    // ============ RENDER A SINGLE CARD ============
+    function createCard(comp, index) {
+      // For 2-column layout: Even indices (0, 2, 4...) are left column, odd are right column.
+      const slideDir = index % 2 === 0 ? 'slide-from-left' : 'slide-from-right';
+      const numStr = String(comp.id).padStart(2, '0');
+
+      let attributesHtml = '';
+      if (comp.attributes && comp.attributes.length > 0) {
+        attributesHtml = '<div class="card-attributes">';
+        comp.attributes.forEach(attr => {
+          attributesHtml += `<div class="card-attr"><span class="attr-label">${attr.label}:</span> <span class="attr-value">${attr.value}</span></div>`;
+        });
+        attributesHtml += '</div>';
+      }
+
+      const card = document.createElement('article');
+      card.className = `component-card ${slideDir}`;
+      card.dataset.index = index;
+      card.id = `component-${comp.id}`;
+
+      card.innerHTML = `
+        <span class="card-number">${numStr}</span>
+        <span class="card-expand-hint">
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+        <div class="card-image-wrapper">
+          <img src="${comp.image}" alt="${comp.name}" class="card-image" loading="lazy" />
+        </div>
+        <div class="card-name">
+          <span class="card-name-dot"></span>
+          ${comp.name}
+        </div>
+        <div class="card-detail">
+          <div class="card-detail-inner">
+            <div class="detail-divider"></div>
+            ${attributesHtml}
+            <div class="card-section">
+              <span class="section-title">Function</span>
+              <p class="card-description">${comp.function}</p>
+            </div>
+            <div class="card-section">
+              <span class="section-title">Working</span>
+              <p class="card-description">${comp.working}</p>
+            </div>
+            <div class="card-section">
+              <span class="section-title">Role in VentiCool</span>
+              <p class="card-description">${comp.role}</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Toggle expand on hover (desktop) and click (mobile)
+      card.addEventListener('mouseenter', () => card.classList.add('expanded'));
+      card.addEventListener('mouseleave', () => card.classList.remove('expanded'));
+      card.addEventListener('click', () => card.classList.toggle('expanded'));
+
+      return card;
+    }
+
+    // ============ FETCH & RENDER ============
+    async function loadComponents() {
+      const grid = document.getElementById('components-grid');
+
+      try {
+        const res = await fetch('/components.json');
+        if (!res.ok) throw new Error('Failed to load components.json');
+        const components = await res.json();
+
+        // Clear skeletons
+        grid.innerHTML = '';
+
+        // Render cards
+        components.forEach((comp, i) => {
+          grid.appendChild(createCard(comp, i));
+        });
+
+        // Scroll-reveal observer
+        const cards = grid.querySelectorAll('.component-card');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const delay = parseInt(entry.target.dataset.index) * 80;
+              setTimeout(() => entry.target.classList.add('visible'), delay);
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+        cards.forEach(card => observer.observe(card));
+      } catch (err) {
+        console.error(err);
+        grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;grid-column:1/-1;padding:40px;">Could not load components. Please check components.json.</p>';
+      }
+    }
+
+    // ============ NAVBAR SCROLL ============
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ============ INIT ============
+    loadComponents();
+  </script>
+</body>
+</html>

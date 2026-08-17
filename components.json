@@ -1,0 +1,121 @@
+[
+  {
+    "id": 1,
+    "name": "170mm DC Exhaust Fan — 24W",
+    "image": "images/Fan.jpg",
+    "attributes": [
+      {"label": "Rated voltage", "value": "220V AC"}
+    ],
+    "function": "Pulls air through the complete cooling system and delivers the conditioned air into the room.",
+    "working": "When powered, the fan rotates and creates airflow through the cooling pad, Venturi section, and silica-gel plates.",
+    "role": "Provides the final airflow and helps overcome the resistance created by the cooling pad and silica-gel cassettes."
+  },
+  {
+    "id": 2,
+    "name": "Tower Fan — 90mm × 40mm",
+    "image": "images/tower_fan.png",
+    "attributes": [
+      {"label": "Rated voltage", "value": "Not specified in the concept note"}
+    ],
+    "function": "Pushes cooled air toward the Venturi section.",
+    "working": "The fan rotates and creates a continuous airflow from the cooling-pad section toward the Venturi channel.",
+    "role": "Maintains airflow through the system and works together with the exhaust fan to overcome flow resistance."
+  },
+  {
+    "id": 3,
+    "name": "Flat Cylindrical DC Motor — 12V",
+    "image": "images/DC_motor.webp",
+    "attributes": [
+      {"label": "Rated voltage", "value": "12V DC"}
+    ],
+    "function": "Drives the tower fan.",
+    "working": "When 12V DC is supplied, the motor converts electrical energy into rotational mechanical energy, which rotates the fan and pushes air through the system.",
+    "role": "It provides the airflow required to move the cooled, humid air toward the Venturi section and silica-gel plates."
+  },
+  {
+    "id": 4,
+    "name": "Water Pump — 12V, 3.8W",
+    "image": "images/Water_pump.webp",
+    "attributes": [
+      {"label": "Rated voltage", "value": "12V DC"}
+    ],
+    "function": "Pumps water from the reservoir to the cooling pad.",
+    "working": "The pump draws water from the tank and pushes it through a water pipe to the top of the cooling pad, keeping the pad continuously wet.",
+    "role": "Supplies the water required for evaporative cooling."
+  },
+  {
+    "id": 5,
+    "name": "Cooling Pad",
+    "image": "images/cooling_pad.png",
+    "attributes": [
+      {"label": "Material", "value": "Evaporative cooling-pad material"}
+    ],
+    "function": "Cools the incoming hot air through evaporation.",
+    "working": "Water spreads over the pad, and when hot air passes through it, some water evaporates and absorbs heat from the air.",
+    "role": "Acts as the primary cooling stage and converts hot outside air into cool but humid air."
+  },
+  {
+    "id": 6,
+    "name": "Silica Gel Plates — 90 × 90 × 20mm",
+    "image": "images/silca_gel.jpeg",
+    "attributes": [
+      {"label": "Quantity", "value": "2 plates"}
+    ],
+    "function": "Removes excess moisture from the cooled air.",
+    "working": "Cool, humid air passes through the silica-gel plates, and the silica gel adsorbs water vapour from the air.",
+    "role": "Reduces the humidity produced by the evaporative cooling process, providing cooler and drier air."
+  },
+  {
+    "id": 7,
+    "name": "Water Reservoir — 0.5L",
+    "image": "images/water_reservoir.png",
+    "attributes": [
+      {"label": "Capacity", "value": "0.5 L"}
+    ],
+    "function": "Stores water required for evaporative cooling.",
+    "working": "The stored water is drawn by the 12V pump and supplied continuously to the cooling pad.",
+    "role": "Provides the water supply for the evaporative cooling process."
+  },
+  {
+    "id": 8,
+    "name": "Water Pipe",
+    "image": "images/water_pipe.png",
+    "attributes": [],
+    "function": "Carries water from the pump to the cooling pad.",
+    "working": "The 12V pump forces water through the pipe toward the top of the cooling pad, allowing the water to spread over the pad.",
+    "role": "Ensures continuous water delivery to maintain the wet surface required for evaporation."
+  },
+  {
+    "id": 9,
+    "name": "Venturi Channel",
+    "image": "images/ventoori.png",
+    "attributes": [
+      {"label": "Design", "value": "Converging channel with a throat width of approximately 130mm"}
+    ],
+    "function": "Increases the velocity of the airflow.",
+    "working": "As the cross-sectional area of the channel decreases, air velocity increases according to the continuity equation, A₁V₁ = A₂V₂.",
+    "role": "Creates a faster, focused airflow through the silica-gel plates, improving air–desiccant contact and moisture absorption."
+  },
+  {
+    "id": 10,
+    "name": "Fiber Outer Body — 170 × 170 × 480mm",
+    "image": "images/Composite_sheet.webp",
+    "attributes": [
+      {"label": "Material", "value": "Fiber"}
+    ],
+    "function": "Provides the main structural enclosure for the system.",
+    "working": "It houses and supports the internal components while providing a defined path for the airflow.",
+    "role": "Forms the main body of the prototype and incorporates the Venturi section."
+  },
+  {
+    "id": 11,
+    "name": "Silica Gel Regeneration System",
+    "image": "images/silca_gel.jpeg",
+    "attributes": [
+      {"label": "Method", "value": "Solar regeneration"}
+    ],
+    "function": "Restores the moisture-absorbing capacity of saturated silica gel.",
+    "working": "When saturated, the removable silica-gel cassette is taken out and placed under direct sunlight. Solar heat drives the absorbed moisture out of the silica gel.",
+    "role": "Allows the silica gel to be reused without additional electrical energy for regeneration."
+  }
+]

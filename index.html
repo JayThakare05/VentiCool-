@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VentiCool — Venturi-Driven Evaporative Cooling System</title>
+  <meta name="description" content="VentiCool: Design and Fabrication of Venturi-Driven with Solid-Desiccant Evaporative Cooling System. An innovative sustainable cooling solution." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============ RESET & BASE ============ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --deep-blue: #0a1628;
+      --navy: #0f2847;
+      --teal-dark: #0c6e7a;
+      --teal: #0ea5c0;
+      --teal-light: #3dd8f0;
+      --cyan: #67e8f9;
+      --ice-blue: #b8f0fc;
+      --white-blue: #e8f9fd;
+      --pure-white: #ffffff;
+      --accent-green: #10b981;
+      --accent-lime: #4ade80;
+      --glass-bg: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --shadow-glow: 0 0 60px rgba(14, 165, 192, 0.15);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', 'Inter', sans-serif;
+      background: var(--deep-blue);
+      color: var(--pure-white);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ============ ANIMATED BACKGROUND ============ */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-canvas::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(14, 165, 192, 0.12) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 50% 50%, rgba(15, 40, 71, 0.6) 0%, transparent 70%);
+      animation: bgShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-3%, 2%) scale(1.05); }
+      100% { transform: translate(2%, -3%) scale(1); }
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.4;
+      animation: float 12s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(14, 165, 192, 0.35), transparent);
+      top: 10%;
+      left: 15%;
+      animation-delay: 0s;
+      animation-duration: 14s;
+    }
+
+    .orb-2 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.25), transparent);
+      bottom: 15%;
+      right: 10%;
+      animation-delay: -4s;
+      animation-duration: 18s;
+    }
+
+    .orb-3 {
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(61, 216, 240, 0.2), transparent);
+      top: 60%;
+      left: 60%;
+      animation-delay: -8s;
+      animation-duration: 16s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -40px) scale(1.05); }
+      50% { transform: translate(-20px, 20px) scale(0.95); }
+      75% { transform: translate(40px, 30px) scale(1.02); }
+    }
+
+    /* Grid lines overlay */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(14, 165, 192, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 165, 192, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    }
+
+    /* ============ MAIN CONTENT ============ */
+    .main-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    /* ============ ISHRAE-STYLE BADGE ============ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 32px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: fadeSlideDown 0.8s ease-out;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ============ COOL CONCLAVE LOGO AREA ============ */
+    .logo-area {
+      margin-bottom: 24px;
+      animation: fadeSlideDown 0.9s ease-out;
+    }
+
+    .logo-text {
+      font-size: 3.2rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+
+    .logo-cool {
+      background: linear-gradient(135deg, var(--teal-light), var(--teal), var(--accent-green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-subtitle {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+
+    /* ============ PROJECT TITLE ============ */
+    .title-wrapper {
+      max-width: 900px;
+      margin-bottom: 20px;
+      animation: fadeSlideUp 1s ease-out 0.2s both;
+    }
+
+    .project-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 16px;
+      opacity: 0.8;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+    }
+
+    .title-venti {
+      background: linear-gradient(135deg, var(--cyan), var(--teal-light), var(--pure-white));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .title-separator {
+      display: inline-block;
+      width: 3px;
+      height: 0.85em;
+      background: linear-gradient(to bottom, var(--teal-light), var(--accent-green));
+      margin: 0 12px;
+      vertical-align: middle;
+      border-radius: 2px;
+    }
+
+    .title-description {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      font-weight: 400;
+      color: var(--ice-blue);
+      opacity: 0.85;
+      line-height: 1.4;
+      margin-top: 8px;
+    }
+
+    /* Decorative line */
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--accent-green));
+      border-radius: 2px;
+      margin: 28px auto 36px;
+      animation: fadeSlideUp 1s ease-out 0.4s both;
+    }
+
+    /* ============ EVENT INFO ============ */
+    .event-info {
+      margin-bottom: 40px;
+      animation: fadeSlideUp 1s ease-out 0.5s both;
+    }
+
+    .event-date {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--white-blue);
+      letter-spacing: 1px;
+    }
+
+    .event-venue {
+      font-size: 0.9rem;
+      color: var(--teal);
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+
+    /* ============ BUTTONS ============ */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      animation: fadeSlideUp 1s ease-out 0.6s both;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .btn:hover::before {
+      opacity: 1;
+    }
+
+    /* Primary CTA — How it Works */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+      color: var(--pure-white);
+      box-shadow: 0 4px 20px rgba(14, 165, 192, 0.3),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-primary::before {
+      background: linear-gradient(135deg, var(--teal-light), var(--teal));
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 35px rgba(14, 165, 192, 0.45),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    /* Secondary — Components */
+    .btn-secondary {
+      background: var(--glass-bg);
+      color: var(--cyan);
+      border: 1.5px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .btn-secondary::before {
+      background: rgba(14, 165, 192, 0.1);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-3px) scale(1.03);
+      border-color: var(--teal);
+      color: var(--pure-white);
+      box-shadow: 0 8px 30px rgba(14, 165, 192, 0.2);
+    }
+
+    /* Accent — Demo Video */
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent-green), #0d9668);
+      color: var(--pure-white);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-accent::before {
+      background: linear-gradient(135deg, var(--accent-lime), var(--accent-green));
+    }
+
+    .btn-accent:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 35px rgba(16, 185, 129, 0.4),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    /* Button icons */
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .btn-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Ripple effect */
+    .btn .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(0);
+      animation: ripple-anim 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-anim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ============ BOTTOM PARTICLES ============ */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--teal-light);
+      border-radius: 50%;
+      opacity: 0;
+      animation: sparkle 6s ease-in-out infinite;
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: translateY(0) scale(0); }
+      50% { opacity: 0.6; transform: translateY(-80px) scale(1); }
+    }
+
+    /* ============ FOOTER WATERMARK ============ */
+    .watermark {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(14, 165, 192, 0.25);
+      z-index: 1;
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .logo-text {
+        font-size: 2.4rem;
+      }
+
+      .btn-group {
+        flex-direction: column;
+        gap: 14px;
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo-text {
+        font-size: 1.8rem;
+      }
+
+      .title-description {
+        font-size: 0.95rem;
+      }
+
+      .badge {
+        font-size: 0.7rem;
+        padding: 6px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Floating Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Main Content -->
+  <main class="main-container">
+
+    <!-- Project Title -->
+    <div class="title-wrapper">
+      <p class="project-label">Our Project</p>
+      <h1>
+        <span class="title-venti">VentiCool</span>
+        <span class="title-separator"></span>
+      </h1>
+      <p class="title-description">
+        Design &amp; Fabrication of Venturi-Driven with Solid-Desiccant Evaporative Cooling System
+      </p>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+
+    <!-- Navigation Buttons -->
+    <div class="btn-group" id="btn-group">
+      <button class="btn btn-primary" id="btn-how-it-works" onclick="handleNav('how-it-works')">
+        <span class="btn-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+        </span>
+        How it Works
+      </button>
+
+      <button class="btn btn-secondary" id="btn-components" onclick="handleNav('components')">
+        <span class="btn-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+        </span>
+        Components
+      </button>
+
+      <button class="btn btn-accent" id="btn-demo-video" onclick="handleNav('demo-video')">
+        <span class="btn-icon">
+          <svg viewBox="0 0 24 24">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+        </span>
+        Demo Video
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer Watermark -->
+  <div class="watermark">VentiCool &mdash; Sustainable Cooling Innovation</div>
+
+  <script>
+    // ============ PARTICLE GENERATOR ============
+    function createParticles() {
+      const container = document.getElementById('particles');
+      const count = 25;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = (40 + Math.random() * 60) + '%';
+        p.style.animationDelay = (Math.random() * 6) + 's';
+        p.style.animationDuration = (4 + Math.random() * 4) + 's';
+        p.style.width = (2 + Math.random() * 3) + 'px';
+        p.style.height = p.style.width;
+        container.appendChild(p);
+      }
+    }
+    createParticles();
+
+    // ============ RIPPLE EFFECT ON BUTTONS ============
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        this.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+      });
+    });
+
+    // ============ NAVIGATION HANDLER ============
+    function handleNav(section) {
+      const routes = {
+        'how-it-works': '/how-it-works.html',
+        'components': '/components.html',
+        'demo-video': '/demo-video.html'
+      };
+      if (routes[section]) {
+        window.location.href = routes[section];
+      }
+    }
+  </script>
+</body>
+</html>
